@@ -32,6 +32,12 @@ dataChannel.onmessage=function(msg){
 async function app(){
     console.log("Entro app");
     emmiter = true;
+    var localStream = await navigator.mediaDevices.getDisplayMedia();
+    peerConnection.addStream(localStream);
+    /*localStream.getTracks((track)=>{
+        console.log(track);
+        peerConnection.addTrack(track);
+    });*/
     const offer = await peerConnection.createOffer();
     send({
         event : "offer",
@@ -79,16 +85,24 @@ io.on("message",async (msg)=>{
 peerConnection.addEventListener('connectionstatechange', event => {
     if (peerConnection.connectionState === 'connected' && emmiter) {
         console.log("Loading");
-        navigator.mediaDevices.getDisplayMedia().then(localStream=>{
-            localStream.getTracks().forEach((track) => {
-                peerConnection.addTrack(track, localStream);
-              });
-        });
     }
 });
 
 
 peerConnection.ontrack = (e)=>{
+    console.log("OnTrack");
     const remoteVideo = document.querySelector('#video');
     remoteVideo.srcObject = e.streams[0];
 };
+
+
+peerConnection.onaddstream = (e)=>{
+    console.log("OnAddStream");
+    console.log(e);
+    const remoteVideo = document.getElementById('video');
+    remoteVideo.srcObject = e.stream;
+    remoteVideo.onloadedmetadata = function(e) {
+        remoteVideo.play();
+        console.log("Play");
+    };
+}

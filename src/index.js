@@ -23,6 +23,7 @@ socket.on("connection",(client)=>{
         console.log("OnMenssage");
         console.log(msg);
         client.broadcast.to(actual).emit("message",msg);
+        //socket.to(actual).emit("message",msg);
     });
 });
 
