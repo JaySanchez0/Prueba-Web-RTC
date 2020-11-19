@@ -27,5 +27,6 @@ socket.on("connection",(client)=>{
     });
 });
 
+var port = process.env.PORT || 80;
 
-httpServer.listen(80,"0.0.0.0",()=>console.log("Listen"));
+httpServer.listen(port,"0.0.0.0",()=>console.log("Listen"));
